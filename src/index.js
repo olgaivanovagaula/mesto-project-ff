@@ -10,7 +10,7 @@ import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
     const addButton = document.querySelector('.profile__add-button');
     const popupEdit = document.querySelector('.popup_type_edit');
     const popupClose = document.querySelectorAll('.popup__close');
-    const formElement = popupEdit.querySelector('.popup__form');
+    const formEdit = popupEdit.querySelector('.popup__form');
     const nameInput = document.querySelector('.popup__input_type_name');
     const jobInput = document.querySelector('.popup__input_type_description');
     const popupCardName = document.querySelector('.popup__input_type_card-name');
@@ -40,14 +40,14 @@ import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
     addButton.addEventListener('click', () => openModal(addCardModal));
 
 //  @todo: Обработчик «отправки» формы 'редактировать'
-    function handleFormSubmit(evt) {
+    function handleEditSubmit(evt) {
         evt.preventDefault();
         profileTitle.textContent = nameInput.value;
         profileDescription.textContent = jobInput.value;
         closeModal(popupEdit)
     };
 
-    formElement.addEventListener('submit', handleFormSubmit);
+    formEdit.addEventListener('submit', handleEditSubmit);
 
 //  @todo: Закрыть попап по кнопке
     popupClose.forEach( btn  => {
@@ -65,8 +65,7 @@ import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
         };
         const card = createCard(cardData, deleteCard, handleLikeCard, openImagePopup);
         cardContainer.prepend(card);
-        popupUrl.value ="";
-        popupCardName.value = "";
+        addCardModalForm.reset();
         closeModal(addCardModal)
     };
 
