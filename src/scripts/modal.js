@@ -3,13 +3,14 @@
 export function openModal(popup) {
     popup.classList.add('popup_is-opened');
     document.addEventListener('keydown', handleEscClose);
-    document.addEventListener('click', (evt) => handleOverlayClick (evt, popup))
+    popup.addEventListener('click', handleOverlayClick);
 };
 
 //  @todo: Функция закрытия модального окна
 export function closeModal(popup) {
     popup.classList.remove('popup_is-opened');
-    document.removeEventListener('keydown', handleEscClose)
+    document.removeEventListener('keydown', handleEscClose);
+    popup.removeEventListener('click', handleOverlayClick);
 };
 
 //  @todo: закрытие модального окна по Esc
@@ -21,8 +22,10 @@ export function closeModal(popup) {
 };
 
 //  @todo: закрытие модального окна по overlay
-function handleOverlayClick (evt, popup) {
-  if (evt.target === popup) {
-      closeModal(popup)
+  function handleOverlayClick (evt) {
+    if (evt.target === evt.currentTarget) {
+        closeModal(evt.currentTarget)
+    };
   };
-};
+
+
