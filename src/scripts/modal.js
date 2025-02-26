@@ -1,3 +1,5 @@
+import { clearValidation } from "./validation";
+import { selectors } from "../index";
 
 //  @todo: Функция открытия модального окна
 export function openModal(popup) {
@@ -8,6 +10,10 @@ export function openModal(popup) {
 
 //  @todo: Функция закрытия модального окна
 export function closeModal(popup) {
+    const form = popup.querySelector('form'); 
+    if(form) {
+      clearValidation(form, selectors)
+    };
     popup.classList.remove('popup_is-opened');
     document.removeEventListener('keydown', handleEscClose);
     popup.removeEventListener('click', handleOverlayClick);

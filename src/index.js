@@ -2,12 +2,25 @@ import './pages/index.css';
 import {initialCards} from './scripts/cards.js';
 import {openModal, closeModal} from './scripts/modal.js';
 import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
+import {enableValidation, clearValidation} from './scripts/validation.js';
+import { getCardsData, getProfileData, editeProfileData, addCardApi, avatarProfileData } from './scripts/api.js';
+
+export const selectors = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+  }
 
 
+document.addEventListener('DOMContentLoaded', () => {
 // @todo: DOM узлы
     const cardContainer = document.querySelector('.places__list');
     const editButton = document.querySelector('.profile__edit-button');
     const addButton = document.querySelector('.profile__add-button');
+    const avatarButton = document.querySelector('.profile__image-button');
     const popupEdit = document.querySelector('.popup_type_edit');
     const popupClose = document.querySelectorAll('.popup__close');
     const formEdit = popupEdit.querySelector('.popup__form');
@@ -16,19 +29,32 @@ import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
     const popupCardName = document.querySelector('.popup__input_type_card-name');
     const popupUrl = document.querySelector('.popup__input_type_url');
     const addCardModal = document.querySelector('.popup_type_new-card');
+    const addAvatarModal = document.querySelector('.popup_type_avatar');
+    const popupAvatar = addAvatarModal.querySelector('.popup__form');
+    const popupAvatarLink = popupAvatar.querySelector('.popup__input_type_avatar');
+    const profileImage = document.querySelector('.profile__image');
     const addCardModalForm = addCardModal.querySelector('.popup__form');
     const openCard = document.querySelector('.popup_type_image'); 
     const cardImage = document.querySelector('.popup__image');
     const cardCaption = document.querySelector('.popup__caption');
     const profileTitle = document.querySelector('.profile__title');
     const profileDescription = document.querySelector('.profile__description');
+    const avatarFormBtn = popupAvatar.querySelector('.popup__button');
+    const editFormBtn = formEdit.querySelector('.popup__button');
+    const cardFormBtn = addCardModalForm.querySelector('.popup__button');
 
 
-// @todo: Вывести карточки на страницу
-    initialCards.forEach(function(item) {
-        const card = createCard(item, deleteCard, handleLikeCard, openImagePopup);
-        cardContainer.append(card);
-    });
+
+    let userId = null
+    Promise.all([getCardsData(),  getProfileData()]).then(([cardData, profileData]) => {
+        userId = profileData._id
+        profileImage.style.backgroundImage = `url(${profileData.avatar})`;
+        cardData.forEach(function(item) {
+            const card = createCard(item, deleteCard, handleLikeCard, openImagePopup, userId);
+            cardContainer.append(card);
+        });
+});
+    
 // @todo: Вывести в поле формы значение со страницы
     function handleOpenEditModal() {
         nameInput.value = profileTitle.textContent;
@@ -38,13 +64,39 @@ import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
 
     editButton.addEventListener('click', () => handleOpenEditModal());
     addButton.addEventListener('click', () => openModal(addCardModal));
+    avatarButton.addEventListener('click', () => openModal(addAvatarModal));
 
-//  @todo: Обработчик «отправки» формы 'редактировать'
+    //  @todo: Обработчик «отправки» формы 'редактировать аватар'
+    function handleAvatarSubmit(evt) {
+        evt.preventDefault();
+        avatarFormBtn.textContent = "Сохранение...";
+        avatarProfileData(popupAvatarLink.value).then((data) => {
+            profileImage.style.backgroundImage = `url(${data.avatar})`;
+            closeModal(addAvatarModal)
+        })
+        .catch ((e) => {
+            console.error('Ошибка редактирования аватара: ' + e)
+        }).finally(() => {
+               avatarFormBtn.textContent = "Сохранить"
+        })
+    };
+
+    popupAvatar.addEventListener('submit', handleAvatarSubmit);
+
+//  @todo: Обработчик «отправки» формы 'редактировать профиль'
     function handleEditSubmit(evt) {
         evt.preventDefault();
-        profileTitle.textContent = nameInput.value;
-        profileDescription.textContent = jobInput.value;
-        closeModal(popupEdit)
+        editFormBtn.textContent = "Сохранение...";
+        editeProfileData(nameInput.value, jobInput.value).then((data) => {
+            profileTitle.textContent = data.name;
+            profileDescription.textContent = data.about;
+            closeModal(popupEdit) 
+        })
+        .catch ((e) => {
+            console.error('Ошибка редактирования профиля: ' + e)
+        }).finally(() => {
+            editFormBtn.textContent = "Сохранить"
+     })
     };
 
     formEdit.addEventListener('submit', handleEditSubmit);
@@ -59,14 +111,19 @@ import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
 //  @todo: Обработчик «отправки» формы 'добавить карточку'
     function handleCardSubmit(evt) {
         evt.preventDefault();
-        const cardData = {
-            link: popupUrl.value,
-            name: popupCardName.value
-        };
-        const card = createCard(cardData, deleteCard, handleLikeCard, openImagePopup);
-        cardContainer.prepend(card);
-        addCardModalForm.reset();
-        closeModal(addCardModal)
+        cardFormBtn.textContent = "Сохранение...";
+        addCardApi(popupCardName.value, popupUrl.value).then((data) => {
+            console.log(data);
+            const card = createCard(data, deleteCard, handleLikeCard, openImagePopup, userId);
+            cardContainer.prepend(card);
+            closeModal(addCardModal)
+        }).catch((error) => {
+            console.log(`Ошибка в создании карточки: ${error}`)
+        }).finally(() => {
+            addCardModalForm.reset();
+            cardFormBtn.textContent = "Сохранить"
+        }) 
+        
     };
 
     addCardModalForm.addEventListener('submit', handleCardSubmit);
@@ -79,5 +136,7 @@ import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
         openModal(openCard);
     };
 
-    
+//  @todo: добавление валидации форм    
+enableValidation(selectors)
+ })
 
