@@ -1,5 +1,5 @@
 import './pages/index.css';
-import {initialCards} from './scripts/cards.js';
+// import {initialCards} from './scripts/cards.js';
 import {openModal, closeModal} from './scripts/modal.js';
 import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
 import {enableValidation, clearValidation} from './scripts/validation.js';
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let userId = null
     Promise.all([getCardsData(),  getProfileData()]).then(([cardData, profileData]) => {
         userId = profileData._id
-        profileImage.style.backgroundImage = `url(${profileData.avatar})`;
+        // profileImage.style.backgroundImage = `url(${profileData.avatar})`;
         cardData.forEach(function(item) {
             const card = createCard(item, deleteCard, handleLikeCard, openImagePopup, userId);
             cardContainer.append(card);
