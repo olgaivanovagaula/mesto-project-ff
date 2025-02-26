@@ -1,4 +1,4 @@
 # Проектная работа Mesto
-Маленькая социальная сеть, где можно опубликовать различные картинки, оценить как свои, так и уже добавленные другими пользователями
+A small social network where you can post various pictures, rate both your own and those already added by other users.
 https://github.com/olgaivanovagaula/mesto-project-ff.git
-Протестировать сайт: https://olgaivanovagaula.github.io/mesto-project-ff/
+Test the website: https://olgaivanovagaula.github.io/mesto-project-ff/
