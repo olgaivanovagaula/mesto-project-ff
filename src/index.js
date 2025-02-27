@@ -1,11 +1,10 @@
 import './pages/index.css';
-// import {initialCards} from './scripts/cards.js';
 import {openModal, closeModal} from './scripts/modal.js';
 import { createCard, deleteCard, handleLikeCard} from './scripts/card.js';
-import {enableValidation, clearValidation} from './scripts/validation.js';
+import {enableValidation, clearValidation, setDisabledBtn} from './scripts/validation.js';
 import { getCardsData, getProfileData, editeProfileData, addCardApi, avatarProfileData } from './scripts/api.js';
 
-export const selectors = {
+ const selectors = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
     submitButtonSelector: '.popup__button',
@@ -48,11 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let userId = null
     Promise.all([getCardsData(),  getProfileData()]).then(([cardData, profileData]) => {
         userId = profileData._id
-        // profileImage.style.backgroundImage = `url(${profileData.avatar})`;
+        profileImage.style.backgroundImage = `url(${profileData.avatar})`;
         cardData.forEach(function(item) {
             const card = createCard(item, deleteCard, handleLikeCard, openImagePopup, userId);
             cardContainer.append(card);
         });
+        profileTitle.textContent = profileData.name;
+        profileDescription.textContent = profileData.about
 });
     
 // @todo: Вывести в поле формы значение со страницы
@@ -62,9 +63,19 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal(popupEdit);
     };
 
-    editButton.addEventListener('click', () => handleOpenEditModal());
-    addButton.addEventListener('click', () => openModal(addCardModal));
-    avatarButton.addEventListener('click', () => openModal(addAvatarModal));
+    editButton.addEventListener('click', () => {
+        clearValidation(formEdit, selectors)
+        handleOpenEditModal()
+    });
+    addButton.addEventListener('click', () =>{ 
+        clearValidation(addCardModalForm, selectors)
+        setDisabledBtn(true, selectors, cardFormBtn)
+        openModal(addCardModal)});
+
+    avatarButton.addEventListener('click', () =>{ 
+        clearValidation(popupAvatar, selectors)
+        setDisabledBtn(true, selectors, avatarFormBtn)
+        openModal(addAvatarModal)});
 
     //  @todo: Обработчик «отправки» формы 'редактировать аватар'
     function handleAvatarSubmit(evt) {
@@ -120,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch((error) => {
             console.log(`Ошибка в создании карточки: ${error}`)
         }).finally(() => {
-            addCardModalForm.reset();
             cardFormBtn.textContent = "Сохранить"
         }) 
         

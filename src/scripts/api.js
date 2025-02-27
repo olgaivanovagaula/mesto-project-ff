@@ -72,8 +72,8 @@ export function deleteCardApi(id) {
     .then((res) => res)
 };
 
-export function likeCardApi(userId) {
-    return fetch(`${apiSettings.baseUrl}/cards/likes/${userId}`,{ headers: apiSettings.headers, method: 'PUT'})
+export function likeCardApi(cardId) {
+    return fetch(`${apiSettings.baseUrl}/cards/likes/${cardId}`,{ headers: apiSettings.headers, method: 'PUT'})
     .then(res => {
         if (res.ok) {return res.json()}
         return Promise.reject(`Ошибка: ${res.status}`);
@@ -81,8 +81,8 @@ export function likeCardApi(userId) {
     .then((res) => res)
 };
 
-export function dislikeCardApi(userId) {
-    return fetch(`${apiSettings.baseUrl}/cards/likes/${userId}`,{ headers: apiSettings.headers, method: 'DELETE'})
+export function dislikeCardApi(cardId) {
+    return fetch(`${apiSettings.baseUrl}/cards/likes/${cardId}`,{ headers: apiSettings.headers, method: 'DELETE'})
     .then(res => {
         if (res.ok) {return res.json()}
         return Promise.reject(`Ошибка: ${res.status}`);
