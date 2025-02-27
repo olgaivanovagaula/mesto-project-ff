@@ -13,7 +13,6 @@ import { getCardsData, getProfileData, editeProfileData, addCardApi, avatarProfi
     errorClass: 'popup__error_visible'
   }
 
-
 document.addEventListener('DOMContentLoaded', () => {
 // @todo: DOM узлы
     const cardContainer = document.querySelector('.places__list');
