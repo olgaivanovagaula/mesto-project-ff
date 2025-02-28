@@ -16,15 +16,17 @@ function inputValidation(input, button, form, selectors) {
 
 export function setDisabledBtn (isDisabled, selectors, btn) {
     if (isDisabled) {
+        btn.disabled = true;
         btn.classList.add(selectors.inactiveButtonClass)
     } else {
+        btn.disabled = false;
         btn.classList.remove(selectors.inactiveButtonClass)
     }
 
 };
 
 function callbackInputValidation(input, button, form, selectors) {
-    button.disabled = setDisabledBtn(!form.checkValidity(), selectors, button)
+    setDisabledBtn(!form.checkValidity(), selectors, button);
     enableBrowserError(input);
     enablePatternError(input, form, selectors)  
 };

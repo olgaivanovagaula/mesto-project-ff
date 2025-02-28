@@ -53,7 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         profileTitle.textContent = profileData.name;
         profileDescription.textContent = profileData.about
-});
+    })
+    .catch ((e) => {
+        console.error('Ошибка: ' + e)});
     
 // @todo: Вывести в поле формы значение со страницы
     function handleOpenEditModal() {
@@ -148,4 +150,3 @@ document.addEventListener('DOMContentLoaded', () => {
 //  @todo: добавление валидации форм    
 enableValidation(selectors)
  })
-
